@@ -13,9 +13,27 @@
 <p>
     <a asp-page="Create">Create New</a>
 </p>
+
+<form asp-page="./Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by name:
+            <input type="text" name="SearchString" value="@Model.CurrentFilter" />
+            <input type="submit" value="Search" class="btn btn-primary" /> |
+            <a asp-page="./Index">Back to full List</a>
+        </p>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Person[0].user_id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Person[0].login)
+            </th>
             <th>
                 @Html.DisplayNameFor(model => model.Person[0].Name)
             </th>
@@ -34,6 +52,12 @@
     <tbody>
 @foreach (var item in Model.Person) {
         <tr>
+           <td>
+                @Html.DisplayFor(modelItem => item.user_id)
+           </td>
+           <td>
+                @Html.DisplayFor(modelItem => item.login)
+           </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Name)
             </td>
@@ -49,9 +73,14 @@
             <td>
                     <a asp-page="./Details" asp-route-id="@item.Id">Details</a>
 
-                    @if (SignInManager.IsSignedIn(User))
+                    @if (item.user_id == Model.object_toSearch.user_id && item.user_id != null)
                     {
-                        <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                        <form method="post">
+                        <td>
+                            <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                            <input name="id_User" value="@item.Id" type="hidden" />
+                        </td>
+                        </form>
                     }
             </td>
         </tr>

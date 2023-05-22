@@ -18,7 +18,8 @@ namespace EFDemo.Models
         [Required(ErrorMessage = "Te pole jest wymagane.")]
         [Range(1899, 2022, ErrorMessage = "Zakres 1899-2022")]
         public int? Year { get; set; }
-
+        public string? user_id { get; set; }
+        public string? login { get; set; }
         public string? Result { get; set; }
         public DateTime CreatedDate { get; set; }
     }

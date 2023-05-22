@@ -14,10 +14,12 @@ namespace EFDemo.Pages
     public class CreateModel : PageModel
     {
         private readonly EFDemo.Data.ApplicationDbContext _context;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public CreateModel(EFDemo.Data.ApplicationDbContext context)
+        public CreateModel(EFDemo.Data.ApplicationDbContext context, IHttpContextAccessor contextAccessor)
         {
             _context = context;
+            _contextAccessor = contextAccessor;
         }
 
         public IActionResult OnGet()
@@ -26,13 +28,20 @@ namespace EFDemo.Pages
         }
 
         [BindProperty]
-        public Person Person { get; set; } = default!;
+        public Person Person { get; set; } = new Person();
         
 
         // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
         public async Task<IActionResult> OnPostAsync()
         {
-          if (!ModelState.IsValid || _context.Person == null || Person == null)
+            if (_contextAccessor.HttpContext.User.Identity.IsAuthenticated)
+            {
+                var user_id = _contextAccessor.HttpContext.User.FindFirst("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/nameidentifier");
+                Person.user_id = user_id.Value;
+                Person.login = _contextAccessor.HttpContext.User.Identity.Name;
+            }
+
+            if (!ModelState.IsValid || _context.Person == null || Person == null)
             {
                 return Page();
             }
