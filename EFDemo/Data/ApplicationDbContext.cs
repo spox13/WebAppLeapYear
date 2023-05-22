@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using EFDemo.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace EFDemo.Data
@@ -9,5 +10,6 @@ namespace EFDemo.Data
             : base(options)
         {
         }
+        public DbSet<Person> Person { get; set; }
     }
 }

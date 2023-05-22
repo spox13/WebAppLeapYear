@@ -16,3 +16,12 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.form-control {
+    margin-top: 7px;
+}
+
+.btn {
+    margin-top: 7px;
+    margin-bottom: 7px;
+}

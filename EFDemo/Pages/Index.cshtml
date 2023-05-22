@@ -1,10 +1,28 @@
 ﻿@page
 @model IndexModel
 @{
-    ViewData["Title"] = "Home page";
+    ViewData["Title"] = "Index";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="text-left">
+    <form method="post" autocomplete="off">
+        <div class="form-group">
+            <label asp-for="Person.Year"></label>
+            <input asp-for="Person.Year" class="form-control" />
+            <span asp-validation-for="Person.Year" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label asp-for="Person.Name"></label>
+            <input asp-for="Person.Name" class="form-control" type="text" />
+            <span asp-validation-for="Person.Name" class="text-danger"></span>
+        </div>
+        <button type="submit" class="btn btn-primary">Sprawdź</button>
+    </form>
+    @foreach (var item in Model.People)
+    {
+        <p>
+            @Html.DisplayFor(modelItem => item.Year)
+            @Html.DisplayFor(modelItem => item.Name)
+        </p>
+    }
 </div>
