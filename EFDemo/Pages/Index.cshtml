@@ -1,28 +1,80 @@
 ﻿@page
-@model IndexModel
+@model EFDemo.Pages.IndexModel
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
 @{
     ViewData["Title"] = "Index";
 }
 
-<div class="text-left">
-    <form method="post" autocomplete="off">
-        <div class="form-group">
-            <label asp-for="Person.Year"></label>
-            <input asp-for="Person.Year" class="form-control" />
-            <span asp-validation-for="Person.Year" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="Person.Name"></label>
-            <input asp-for="Person.Name" class="form-control" type="text" />
-            <span asp-validation-for="Person.Name" class="text-danger"></span>
-        </div>
-        <button type="submit" class="btn btn-primary">Sprawdź</button>
-    </form>
-    @foreach (var item in Model.People)
-    {
-        <p>
-            @Html.DisplayFor(modelItem => item.Year)
-            @Html.DisplayFor(modelItem => item.Name)
-        </p>
-    }
-</div>
+<h1>Index</h1>
+
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Person[0].Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Person[0].Year)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Person[0].Result)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Person[0].CreatedDate)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Person) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Year)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Result)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CreatedDate)
+            </td>
+            <td>
+                    <a asp-page="./Details" asp-route-id="@item.Id">Details</a>
+
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+                    }
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+@{
+    var prevDisabled = !Model.Person.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.Person.HasNextPage ? "disabled" : "";
+}
+
+<a asp-page="./Index"
+   asp-route-sortOrder="@Model.CurrentSort"
+   asp-route-pageIndex="@(Model.Person.PageIndex - 1)"
+   asp-route-currentFilter="@Model.CurrentFilter"
+   class="btn btn-primary @prevDisabled">
+    Previous
+</a>
+<a asp-page="./Index"
+   asp-route-sortOrder="@Model.CurrentSort"
+   asp-route-pageIndex="@(Model.Person.PageIndex + 1)"
+   asp-route-currentFilter="@Model.CurrentFilter"
+   class="btn btn-primary @nextDisabled">
+    Next
+</a>
