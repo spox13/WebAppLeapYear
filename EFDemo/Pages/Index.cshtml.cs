@@ -10,19 +10,20 @@ using EFDemo.Models;
 using ContosoUniversity;
 using Microsoft.Extensions.Configuration;
 using System.Configuration;
+using EFDemo.Services;
 
 namespace EFDemo.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly EFDemo.Data.ApplicationDbContext _context;
         private readonly IConfiguration Configuration;
         private readonly ILogger<IndexModel> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
+        private readonly ILeapYearInterface _personService;
 
-        public IndexModel(EFDemo.Data.ApplicationDbContext context, IConfiguration configuration, ILogger<IndexModel> logger, IHttpContextAccessor contextAccessor)
+        public IndexModel(ILeapYearInterface personService, IConfiguration configuration, ILogger<IndexModel> logger, IHttpContextAccessor contextAccessor)
         {
-            _context = context;
+            _personService = personService;
             Configuration = configuration;
             _logger = logger;
             _contextAccessor = contextAccessor;
@@ -32,7 +33,7 @@ namespace EFDemo.Pages
         public string DateSort { get; set; }
         public string CurrentFilter { get; set; }
         public string CurrentSort { get; set; }
-        public PaginatedList<Person> Person { get; set; } = default!;
+        public PaginatedList<Person> Person { get; set; }
 
         public async Task OnGetAsync(string sortOrder, string searchString, string currentFilter, int? pageIndex)
         {
@@ -44,10 +45,9 @@ namespace EFDemo.Pages
 
             CurrentSort = sortOrder == "Date" ? "date_desc" : "Date";
 
-            IQueryable<Person> personIQ = from s in _context.Person select s;
+            var people = await _personService.GetAllPeopleAsync();
 
-
-            personIQ = personIQ.OrderByDescending(s => s.CreatedDate);
+            people = people.OrderByDescending(s => s.CreatedDate).ToList();
 
 
             if (searchString != null)
@@ -59,10 +59,10 @@ namespace EFDemo.Pages
                 searchString = currentFilter;
             }
 
-            
 
+            var peopleQueryable = people.AsQueryable();
             var pageSize = Configuration.GetValue("PageSize", 20);
-            Person = await PaginatedList<Person>.CreateAsync(personIQ.AsNoTracking(), pageIndex ?? 1, pageSize);
+            Person = await PaginatedList<Person>.CreateAsync(people, pageIndex ?? 1, pageSize);
         }
     }
 }
