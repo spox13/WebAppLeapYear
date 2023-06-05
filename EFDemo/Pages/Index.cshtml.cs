@@ -11,6 +11,8 @@ using ContosoUniversity;
 using Microsoft.Extensions.Configuration;
 using System.Configuration;
 using EFDemo.Services;
+using EFDemo.Interfaces;
+using EFDemo.ViewModels;
 
 namespace EFDemo.Pages
 {
@@ -19,9 +21,10 @@ namespace EFDemo.Pages
         private readonly IConfiguration Configuration;
         private readonly ILogger<IndexModel> _logger;
         private readonly IHttpContextAccessor _contextAccessor;
-        private readonly ILeapYearInterface _personService;
+        private readonly ILeapYearService _personService;
+        public ListPersonForListVM Records { get; set; }
 
-        public IndexModel(ILeapYearInterface personService, IConfiguration configuration, ILogger<IndexModel> logger, IHttpContextAccessor contextAccessor)
+        public IndexModel(ILeapYearService personService, IConfiguration configuration, ILogger<IndexModel> logger, IHttpContextAccessor contextAccessor)
         {
             _personService = personService;
             Configuration = configuration;
@@ -45,9 +48,9 @@ namespace EFDemo.Pages
 
             CurrentSort = sortOrder == "Date" ? "date_desc" : "Date";
 
-            var people = await _personService.GetAllPeopleAsync();
+            Records = _personService.GetPeopleForList();
 
-            people = people.OrderByDescending(s => s.CreatedDate).ToList();
+            Records.People = Records.People.OrderByDescending(s => s.CreatedDate).ToList();
 
 
             if (searchString != null)
@@ -60,9 +63,8 @@ namespace EFDemo.Pages
             }
 
 
-            var peopleQueryable = people.AsQueryable();
+            var peopleQueryable = Records.People.AsQueryable();
             var pageSize = Configuration.GetValue("PageSize", 20);
-            Person = await PaginatedList<Person>.CreateAsync(people, pageIndex ?? 1, pageSize);
         }
     }
 }

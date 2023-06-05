@@ -4,6 +4,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Http;
 using EFDemo.Services;
+using EFDemo.Interfaces;
+using EFDemo.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,7 +20,8 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
 builder.Services.AddRazorPages();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>options.UseSqlServer(builder.Configuration.GetConnectionString("EFDemoDB")));
-builder.Services.AddScoped<ILeapYearInterface, ILeapYearService>();
+builder.Services.AddTransient<ILeapYearService, LeapYearService>();
+builder.Services.AddTransient<ILeapYearRepository, LeapYearRepository>();
 
 var app = builder.Build();
 
