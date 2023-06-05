@@ -50,7 +50,7 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Records.People) {
+@foreach (var item in Model.Person) {
         <tr>
            <td>
                 @Html.DisplayFor(modelItem => item.user_id)
@@ -87,3 +87,23 @@
 }
     </tbody>
 </table>
+
+@{
+    var prevDisabled = !Model.Person.HasPreviousPage ? "disabled" : "";
+    var nextDisabled = !Model.Person.HasNextPage ? "disabled" : "";
+}
+
+<a asp-page="./Index"
+   asp-route-sortOrder="@Model.CurrentSort"
+   asp-route-pageIndex="@(Model.Person.PageIndex - 1)"
+   asp-route-currentFilter="@Model.CurrentFilter"
+   class="btn btn-primary @prevDisabled">
+    Previous
+</a>
+<a asp-page="./Index"
+   asp-route-sortOrder="@Model.CurrentSort"
+   asp-route-pageIndex="@(Model.Person.PageIndex + 1)"
+   asp-route-currentFilter="@Model.CurrentFilter"
+   class="btn btn-primary @nextDisabled">
+    Next
+</a>

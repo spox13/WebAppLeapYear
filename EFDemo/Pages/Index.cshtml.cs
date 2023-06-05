@@ -31,12 +31,12 @@ namespace EFDemo.Pages
             _logger = logger;
             _contextAccessor = contextAccessor;
         }
-        public Person object_toSearch { get; set; } = new Person();
+        public PersonForListVM object_toSearch { get; set; } = new PersonForListVM();
         public string NameSort { get; set; }
         public string DateSort { get; set; }
         public string CurrentFilter { get; set; }
         public string CurrentSort { get; set; }
-        public PaginatedList<Person> Person { get; set; }
+        public PaginatedList<PersonForListVM> Person { get; set; }
 
         public async Task OnGetAsync(string sortOrder, string searchString, string currentFilter, int? pageIndex)
         {
@@ -65,6 +65,7 @@ namespace EFDemo.Pages
 
             var peopleQueryable = Records.People.AsQueryable();
             var pageSize = Configuration.GetValue("PageSize", 20);
+            Person = await PaginatedList<PersonForListVM>.CreateAsync(Records.People, pageIndex ?? 1, pageSize);
         }
     }
 }
